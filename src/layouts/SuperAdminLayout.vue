@@ -12,6 +12,11 @@ const menuItems = [
     icon: 'dashboard',
   },
   {
+    name: 'System Config',
+    path: '/super-admin/system-config',
+    icon: 'config',
+  },
+  {
     name: 'User Management',
     path: '/super-admin/user-management',
     icon: 'users',
@@ -20,11 +25,6 @@ const menuItems = [
     name: 'Role Management',
     path: '/super-admin/role-management',
     icon: 'role',
-  },
-  {
-    name: 'System Config',
-    path: '/super-admin/system-config',
-    icon: 'config',
   },
 ]
 
