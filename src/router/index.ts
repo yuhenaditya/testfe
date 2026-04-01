@@ -10,6 +10,7 @@ import DashboardView from '../views/super-admin/DashboardView.vue'
 import SystemConfigView from '../views/super-admin/SystemConfigView.vue'
 import RoleManagementView from '../views/super-admin/RoleManagementView.vue'
 import UserManagementView from '../views/super-admin/UserManagementView.vue'
+import ProfileView from '../views/super-admin/ProfileView.vue'
 
 const routes = [
   {
@@ -51,6 +52,11 @@ const routes = [
         path: 'user-management',
         name: 'UserManagement',
         component: UserManagementView,
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: ProfileView,
       },
     ],
   },

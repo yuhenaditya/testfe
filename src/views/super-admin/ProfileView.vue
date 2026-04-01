@@ -1,0 +1,247 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const activeTab = ref<'bukti' | 'log'>('bukti')
+
+const vendorInfo = {
+  name: 'Creativ Studio',
+  id: '#VDR-4567',
+  statusPengajuan: 'Diterima',
+  statusBadge: 'DIBATASI',
+  alasanBan: 'Spam promosi berlebihan',
+  diblokirOleh: 'Mufti Afrizah',
+  tanggalBanned: '3 Januari 2026',
+  tanggalAppeal: '5 Januari 2026',
+}
+
+const buktiFiles = [
+  {
+    name: 'Screenshot Gangguan Internet.png',
+    format: 'PNG',
+    size: '2MB',
+  },
+  {
+    name: 'Riwayat Pengiriman Pesan Promosi.png',
+    format: 'PNG',
+    size: '1.5MB',
+  },
+]
+
+const logAktivitas = [
+  {
+    title: 'Sistem mendeteksi aktivitas spam posting',
+    subtitle: 'System Moderation',
+    date: '09 Februari 2026',
+    isCurrent: false,
+  },
+  {
+    title: 'Admin Validator meninjau aktivitas posting',
+    subtitle: 'Admin Validator A',
+    date: '10 Februari 2026',
+    isCurrent: false,
+  },
+  {
+    title: 'Vendor di-suspend karena spam posting berulang',
+    subtitle: 'Admin Validator A',
+    date: '14 - 16 Februari 2026',
+    isCurrent: false,
+  },
+  {
+    title: 'Vendor mengunggah bukti gangguan koneksi',
+    subtitle: 'Menunggu keputusan akhir',
+    date: '17 Februari 2026',
+    isCurrent: false,
+  },
+  {
+    title: 'Vendor mengajukan banding atas suspend',
+    subtitle: 'Creativ Studio',
+    date: '20 Februari 2026',
+    isCurrent: true,
+  },
+]
+
+const pesanBanding = `Kepada Tim Admin,
+
+Saya mengajukan banding atas suspend yang dikenakan pada toko saya karena dianggap melakukan spam promosi.
+
+Pada saat kejadian, koneksi internet di tempat saya tidak stabil. Akibatnya pesan promosi yang saya kirimkan gagal terkirim beberapa kali dan sistem mencoba mengirim ulang secara otomatis. Hal ini menyebabkan pesan yang sama terkirim berulang kali dalam waktu singkat.
+Saya tidak bermaksud melakukan spam kepada pengguna. Saya telah melampirkan bukti riwayat pengiriman dan tangkapan layar kondisi koneksi saat kejadian.
+
+Terima kasih atas perhatian dan waktunya.`
+
+const goBack = () => {
+  router.back()
+}
+</script>
+
+<template>
+  <div class="w-full max-w-4xl mx-auto pb-12 font-sans">
+    <!-- Kembali Button -->
+    <button @click="goBack" class="flex items-center gap-2 text-gray-800 hover:text-gray-600 mb-6 group transition-colors">
+      <svg class="w-5 h-5 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span class="text-sm font-medium">Kembali</span>
+    </button>
+
+    <!-- Header Card -->
+    <div class="bg-[#FFF5F0] rounded-2xl px-8 py-6 flex items-center justify-between mb-6">
+      <div class="flex items-center gap-5">
+        <!-- Avatar -->
+        <div class="w-14 h-14 rounded-full bg-gray-300 shrink-0 overflow-hidden">
+          <img src="https://i.pravatar.cc/150?img=32" alt="Vendor Avatar" class="w-full h-full object-cover" />
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold text-gray-900">Creativ Studio</h1>
+          <span class="inline-flex items-center gap-1.5 mt-1 bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+            <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+            Status pengajuan: Diterima
+          </span>
+        </div>
+      </div>
+      <button class="bg-brand-navy hover:bg-blue-800 text-white font-semibold text-sm px-5 py-2.5 rounded-xl transition-colors whitespace-nowrap">
+        Lihat Profil
+      </button>
+    </div>
+
+    <!-- Detail Info Card -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-6 shadow-sm">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900">{{ vendorInfo.name }}</h2>
+          <p class="text-sm text-gray-500 mt-0.5">{{ vendorInfo.id }}</p>
+        </div>
+        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-bold bg-red-50 text-red-600 border border-red-200">
+          DIBATASI
+        </span>
+      </div>
+
+      <div class="space-y-3 text-sm">
+        <div class="flex">
+          <span class="text-gray-500 w-40 shrink-0">Alasan Ban:</span>
+          <span class="text-gray-800 font-medium">{{ vendorInfo.alasanBan }}</span>
+        </div>
+        <div class="flex">
+          <span class="text-gray-500 w-40 shrink-0">Diblokir oleh:</span>
+          <a href="#" class="text-blue-600 font-medium underline hover:text-blue-800 transition-colors">{{ vendorInfo.diblokirOleh }}</a>
+        </div>
+        <div class="flex">
+          <span class="text-gray-500 w-40 shrink-0">Tanggal Banned:</span>
+          <span class="text-gray-800 font-medium">{{ vendorInfo.tanggalBanned }}</span>
+        </div>
+        <div class="flex">
+          <span class="text-gray-500 w-40 shrink-0">Tanggal Appeal:</span>
+          <span class="text-gray-800 font-medium">{{ vendorInfo.tanggalAppeal }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bukti / Log Aktivitas Card -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-6 shadow-sm">
+      <!-- Tab Buttons -->
+      <div class="flex items-center gap-2 mb-6">
+        <button
+          @click="activeTab = 'bukti'"
+          class="px-5 py-2 rounded-full text-sm font-semibold transition-all"
+          :class="activeTab === 'bukti' ? 'bg-brand-navy text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+        >
+          Bukti
+        </button>
+        <button
+          @click="activeTab = 'log'"
+          class="px-5 py-2 rounded-full text-sm font-semibold transition-all"
+          :class="activeTab === 'log' ? 'bg-brand-navy text-white shadow-md' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
+        >
+          Log Aktivitas
+        </button>
+      </div>
+
+      <!-- Bukti Tab Content -->
+      <div v-if="activeTab === 'bukti'" class="space-y-3">
+        <div
+          v-for="(file, idx) in buktiFiles"
+          :key="idx"
+          class="flex items-center justify-between border border-gray-200 rounded-xl px-5 py-4 hover:bg-gray-50 transition-colors"
+        >
+          <div class="flex items-center gap-4">
+            <!-- File Icon -->
+            <div class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-bold text-gray-900">{{ file.name }}</p>
+              <p class="text-xs text-gray-500">File Format: {{ file.format }} · File Size: {{ file.size }}</p>
+            </div>
+          </div>
+          <button class="text-gray-400 hover:text-gray-700 transition-colors p-2 rounded-lg hover:bg-gray-100">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Log Aktivitas Tab Content -->
+      <div v-if="activeTab === 'log'" class="pl-2">
+        <div class="relative">
+          <!-- Vertical Timeline Line -->
+          <div class="absolute left-[7px] top-2 bottom-2 w-0.5 bg-blue-200"></div>
+
+          <div class="space-y-6">
+            <div
+              v-for="(log, idx) in logAktivitas"
+              :key="idx"
+              class="flex items-start gap-5 relative"
+            >
+              <!-- Timeline Dot -->
+              <div class="relative z-10 shrink-0 mt-1">
+                <div
+                  class="w-4 h-4 rounded-full border-[3px]"
+                  :class="log.isCurrent ? 'border-blue-600 bg-white' : 'border-blue-400 bg-white'"
+                ></div>
+              </div>
+
+              <!-- Content -->
+              <div class="flex-1 flex items-start justify-between pb-0">
+                <div>
+                  <p
+                    class="text-sm font-bold"
+                    :class="log.isCurrent ? 'text-blue-600' : 'text-gray-900'"
+                  >
+                    {{ log.title }}
+                  </p>
+                  <p class="text-xs text-gray-400 mt-0.5">{{ log.subtitle }}</p>
+                </div>
+                <span class="text-xs text-gray-400 whitespace-nowrap ml-4 mt-0.5">{{ log.date }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pesan Banding dari Pengaju Card -->
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 mb-8 shadow-sm">
+      <h3 class="text-lg font-bold text-gray-900 mb-5">Pesan Banding dari Pengaju</h3>
+      <div class="bg-[#FFF9F5] border border-orange-100 rounded-2xl p-6">
+        <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{{ pesanBanding }}</p>
+      </div>
+    </div>
+
+    <!-- Buat Keputusan Button -->
+    <div class="flex justify-center">
+      <button class="bg-brand-navy hover:bg-blue-800 text-white font-semibold text-sm px-16 py-3 rounded-2xl transition-colors shadow-lg hover:shadow-xl">
+        Buat Keputusan
+      </button>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+/* No scoped styles needed */
+</style>

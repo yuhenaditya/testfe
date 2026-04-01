@@ -130,16 +130,16 @@ function toggleSidebar() {
 
       <!-- Settings and Avatar outside the blue box -->
       <div class="mt-8 flex flex-col gap-6 w-full items-center">
-        <!-- Toggle Button for Sidebar (Instead of gear if needed, but let's keep gear) -->
-        <button
-          @click="toggleSidebar"
+        <!-- Profile Link -->
+        <router-link
+          to="/super-admin/profile"
           class="w-12 h-12 rounded-full overflow-hidden flex items-center justify-center shadow-md bg-white border border-gray-100 hover:shadow-lg transition-shadow"
           :class="!sidebarCollapsed && 'px-4 w-full justify-start gap-4 rounded-xl'"
         >
           <img src="https://i.pravatar.cc/150?img=11" alt="User Profile" class="w-full h-full object-cover" v-if="sidebarCollapsed" />
           <img src="https://i.pravatar.cc/150?img=11" alt="User Profile" class="w-8 h-8 rounded-full object-cover" v-if="!sidebarCollapsed" />
           <span v-if="!sidebarCollapsed" class="font-semibold text-sm">Super Admin</span>
-        </button>
+        </router-link>
 
         <button class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-gray-800 transition-colors" @click="toggleSidebar">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
