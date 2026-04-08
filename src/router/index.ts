@@ -11,6 +11,7 @@ import SystemConfigView from '../views/super-admin/SystemConfigView.vue'
 import RoleManagementView from '../views/super-admin/RoleManagementView.vue'
 import UserManagementView from '../views/super-admin/UserManagementView.vue'
 import ProfileView from '../views/super-admin/ProfileView.vue'
+import PermintaanBandingView from '../views/super-admin/PermintaanBandingView.vue'
 
 const routes = [
   {
@@ -57,6 +58,11 @@ const routes = [
         path: 'profile',
         name: 'Profile',
         component: ProfileView,
+      },
+      {
+        path: 'permintaan-banding',
+        name: 'PermintaanBanding',
+        component: PermintaanBandingView,
       },
     ],
   },

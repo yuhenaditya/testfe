@@ -23,7 +23,7 @@ const menuItems = [
   },
   {
     name: 'Permintaan Banding',
-    path: '/super-admin/appeal-requests',
+    path: '/super-admin/permintaan-banding',
     icon: 'gavel',
   },
   {

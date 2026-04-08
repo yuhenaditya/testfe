@@ -5,6 +5,19 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const activeTab = ref<'bukti' | 'log'>('bukti')
 
+// Modal state
+const showDecisionModal = ref(false)
+
+const closeDecisionModal = () => {
+  showDecisionModal.value = false
+}
+
+const handleDecision = (type: 'cabut' | 'tolak') => {
+  // Handle decision
+  console.log('Decision:', type)
+  closeDecisionModal()
+}
+
 const vendorInfo = {
   name: 'Creativ Studio',
   id: '#VDR-4567',
@@ -233,12 +246,57 @@ const goBack = () => {
       </div>
     </div>
 
-    <!-- Buat Keputusan Button -->
-    <div class="flex justify-center">
-      <button class="bg-brand-navy hover:bg-blue-800 text-white font-semibold text-sm px-16 py-3 rounded-2xl transition-colors shadow-lg hover:shadow-xl">
+    <!-- Buat Keputusan Button - Positioned to the right -->
+    <div class="flex justify-end">
+      <button 
+        @click="showDecisionModal = true"
+        class="bg-brand-navy hover:bg-blue-800 text-white font-semibold text-sm px-16 py-3 rounded-2xl transition-colors shadow-lg hover:shadow-xl"
+      >
         Buat Keputusan
       </button>
     </div>
+
+    <!-- Decision Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="showDecisionModal" 
+        class="fixed inset-0 z-50 flex items-center justify-center"
+      >
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50" @click="closeDecisionModal"></div>
+        
+        <!-- Modal Content - Keputusan Banding Card -->
+        <div class="relative bg-gray-100 rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-6">
+          <!-- Close Button -->
+          <button 
+            @click="closeDecisionModal"
+            class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <h3 class="text-base font-bold text-gray-900 mb-2">Keputusan Banding</h3>
+          <p class="text-sm text-gray-500 mb-6">Periksa bukti dan log aktivitas sebelum mengambil keputusan.</p>
+          
+          <div class="space-y-3">
+            <button 
+              @click="handleDecision('cabut')"
+              class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold text-sm py-3 px-4 rounded-xl transition-colors"
+            >
+              Cabut Suspend
+            </button>
+            <button 
+              @click="handleDecision('tolak')"
+              class="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold text-sm py-3 px-4 rounded-xl border border-gray-300 transition-colors"
+            >
+              Tolak Banding
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
