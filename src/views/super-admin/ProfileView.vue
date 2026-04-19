@@ -84,6 +84,11 @@ Saya tidak bermaksud melakukan spam kepada pengguna. Saya telah melampirkan bukt
 
 Terima kasih atas perhatian dan waktunya.`
 
+const handleLogout = () => {
+  // Clear any auth tokens or state here if needed
+  router.push('/admin/login')
+}
+
 const goBack = () => {
   router.back()
 }
@@ -91,13 +96,24 @@ const goBack = () => {
 
 <template>
   <div class="w-full max-w-4xl mx-auto pb-12 font-sans">
-    <!-- Kembali Button -->
-    <button @click="goBack" class="flex items-center gap-2 text-gray-800 hover:text-gray-600 mb-6 group transition-colors">
-      <svg class="w-5 h-5 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-      </svg>
-      <span class="text-sm font-medium">Kembali</span>
-    </button>
+    <!-- Top Actions -->
+    <div class="flex items-center justify-between mb-6">
+      <!-- Kembali Button -->
+      <button @click="goBack" class="flex items-center gap-2 text-gray-800 hover:text-gray-600 group transition-colors">
+        <svg class="w-5 h-5 transition-transform group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span class="text-sm font-medium">Kembali</span>
+      </button>
+
+      <!-- Logout Button -->
+      <button @click="handleLogout" class="flex items-center gap-2 bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-bold transition-colors border border-red-100 shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Logout
+      </button>
+    </div>
 
     <!-- Header Card -->
     <div class="bg-[#FFF5F0] rounded-2xl px-8 py-6 flex items-center justify-between mb-6">

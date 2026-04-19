@@ -1,51 +1,117 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+
+const showAddModal = ref(false)
+const searchQuery = ref('')
+const selectedStatus = ref('all')
+const selectedRole = ref('all')
+
+// Form data for new admin
+const newAdmin = ref({
+  name: '',
+  email: '',
+  role: 'Validator',
+})
+
+const currentView = ref('list')
+const selectedAdmin = ref<any>(null)
+const showDeleteModal = ref(false)
+
+function openDetail(admin: any) {
+  selectedAdmin.value = admin
+  currentView.value = 'detail'
+}
+
+function goBack() {
+  currentView.value = 'list'
+  selectedAdmin.value = null
+}
 
 const users = ref([
   {
-    id: 'ID0001',
+    id: 1,
     name: 'Olivia Rhye',
+    personalEmail: 'olivia@gmail.com',
     email: 'olivia@untitledui.com',
-    status: 'Suspend',
+    status: 'Active',
+    role: 'Admin Validator',
   },
   {
-    id: 'ID0002',
+    id: 2,
     name: 'Phoenix Baker',
+    personalEmail: 'phoenix@gmail.com',
     email: 'phoenix@untitledui.com',
     status: 'Active',
+    role: 'Admin Validator',
   },
   {
-    id: 'ID0003',
+    id: 3,
     name: 'Lana Steiner',
+    personalEmail: 'lana@gmail.com',
     email: 'lana@untitledui.com',
     status: 'Active',
+    role: 'Finance',
   },
   {
-    id: 'ID0004',
+    id: 4,
     name: 'Demi Wilkinson',
+    personalEmail: 'demiWilkinson@gmail.com',
     email: 'demi@untitledui.com',
     status: 'Active',
-  },
-  {
-    id: 'ID0003',
-    name: 'Lana Steiner',
-    email: 'lana@untitledui.com',
-    status: 'Active',
-  },
-  {
-    id: 'ID0004',
-    name: 'Demi Wilkinson',
-    email: 'demi@untitledui.com',
-    status: 'Active',
+    role: 'Finance',
   },
 ])
+
+const filteredUsers = computed(() => {
+  return users.value.filter((user) => {
+    const matchSearch =
+      searchQuery.value === '' ||
+      user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const matchStatus = selectedStatus.value === 'all' || user.status === selectedStatus.value
+    const matchRole = selectedRole.value === 'all' || user.role === selectedRole.value
+    return matchSearch && matchStatus && matchRole
+  })
+})
+
+const totalAdminAktif = computed(() => 7)
+const activeValidator = computed(() => 5)
+const adminFinance = computed(() => 5)
+
+function openAddModal() {
+  newAdmin.value = { name: '', email: '', role: 'Validator' }
+  showAddModal.value = true
+}
+
+function closeAddModal() {
+  showAddModal.value = false
+}
+
+function submitNewAdmin() {
+  // Handle submit logic here
+  console.log('New admin:', newAdmin.value)
+  closeAddModal()
+}
+
+function getRoleColor(role: string) {
+  switch (role) {
+    case 'Admin Validator':
+      return 'bg-blue-50 text-blue-700 border-blue-200'
+    case 'Finance':
+      return 'bg-red-50 text-red-600 border-red-200'
+    default:
+      return 'bg-gray-50 text-gray-700 border-gray-200'
+  }
+}
 </script>
 
 <template>
   <div class="space-y-6 pb-12 w-full max-w-6xl mx-auto">
-    <!-- Header -->
+    <!-- LIST VIEW -->
+    <template v-if="currentView === 'list'">
+      <!-- Header -->
     <div class="flex items-center justify-between border-b border-gray-200 pb-4 h-16">
-      <h1 class="text-[22px] font-semibold text-gray-900 border-none">Manajemen User</h1>
+      <h1 class="text-[22px] font-semibold text-gray-900 border-none">Manajemen Peran</h1>
       <!-- Top header notification bell -->
       <button class="relative p-2 text-gray-600 hover:text-gray-900 rounded-full hover:bg-gray-100 transition-colors">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,8 +121,50 @@ const users = ref([
       </button>
     </div>
 
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Total Admin Aktif -->
+      <div class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-3xl font-bold text-gray-900">{{ totalAdminAktif }}</p>
+          <p class="text-sm text-gray-500 mt-1">Total Admin Aktif</p>
+        </div>
+      </div>
+
+      <!-- Active Validator -->
+      <div class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-3xl font-bold text-gray-900">{{ activeValidator }}</p>
+          <p class="text-sm text-gray-500 mt-1">Active Validator</p>
+        </div>
+      </div>
+
+      <!-- Admin Finance -->
+      <div class="bg-white border border-gray-200 rounded-2xl p-5 flex flex-col gap-3">
+        <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
+          <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div>
+          <p class="text-3xl font-bold text-gray-900">{{ adminFinance }}</p>
+          <p class="text-sm text-gray-500 mt-1">Admin Finance</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Filters and Action bar -->
-    <div class="flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#F9F7F7] pt-2">
+    <div class="flex flex-col sm:flex-row gap-4 justify-between items-center pt-2">
       <!-- Search -->
       <div class="relative w-full sm:max-w-md flex-1">
         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -65,9 +173,10 @@ const users = ref([
           </svg>
         </div>
         <input
+          v-model="searchQuery"
           type="text"
           placeholder="cari member"
-          class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-2xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition-all"
+          class="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-2xl leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm shadow-sm transition-all"
         />
       </div>
 
@@ -94,7 +203,10 @@ const users = ref([
         </div>
 
         <!-- Add Admin Button -->
-        <button class="flex items-center justify-center gap-2 bg-brand-navy text-white px-5 py-2.5 rounded-2xl text-sm font-semibold hover:bg-blue-800 shadow-sm transition-all whitespace-nowrap">
+        <button
+          @click="openAddModal"
+          class="flex items-center justify-center gap-2 bg-brand-navy text-white px-5 py-2.5 rounded-2xl text-sm font-semibold hover:bg-blue-800 shadow-sm transition-all whitespace-nowrap"
+        >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
           </svg>
@@ -107,9 +219,9 @@ const users = ref([
     <div class="bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden flex flex-col">
       <!-- Card Header -->
       <div class="px-6 py-5 border-b border-gray-200 flex items-center gap-3 bg-white">
-        <h2 class="text-lg font-bold text-gray-900 leading-none">Total User</h2>
+        <h2 class="text-lg font-bold text-gray-900 leading-none">Team members</h2>
         <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-purple-50 text-purple-700 border border-purple-100">
-          32 users
+          {{ filteredUsers.length }} users
         </span>
       </div>
 
@@ -130,26 +242,33 @@ const users = ref([
                 </div>
               </th>
               <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 tracking-wider">
-                Email address
+                <div class="flex items-center gap-1">
+                  Role
+                  <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
               </th>
-              <th scope="col" class="px-6 py-4 text-right text-xs font-medium text-gray-500 tracking-wider">
-                Aksi
+              <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 tracking-wider">
+                Email
+              </th>
+              <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 tracking-wider">
+                Aktivitas Terakhir
               </th>
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <template v-for="(user, index) in users" :key="index">
+            <template v-for="(user, index) in filteredUsers" :key="index">
               <tr class="hover:bg-gray-50 transition-colors group">
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex flex-col">
                     <span class="text-sm font-semibold text-gray-900">{{ user.name }}</span>
-                    <span class="text-sm text-gray-500">{{ user.id }}</span>
+                    <span class="text-sm text-gray-400">{{ user.personalEmail }}</span>
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
-                    class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border border-gray-300 gap-1.5"
-                    :class="user.status === 'Active' ? 'text-gray-700 bg-white' : 'text-gray-700 bg-white'"
+                    class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border border-gray-300 gap-1.5 bg-white text-gray-700"
                   >
                     <!-- Dot -->
                     <span
@@ -160,10 +279,18 @@ const users = ref([
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border"
+                    :class="getRoleColor(user.role)"
+                  >
+                    {{ user.role }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
                   <span class="text-sm text-gray-600">{{ user.email }}</span>
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                  <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <button @click="openDetail(user)" class="text-gray-400 hover:text-gray-600 transition-colors mx-auto flex items-center justify-center">
                     <span class="sr-only">View</span>
                     <svg class="w-[22px] h-[22px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -206,9 +333,254 @@ const users = ref([
       </div>
 
     </div>
+    </template>
+
+    <!-- DETAIL VIEW -->
+    <template v-if="currentView === 'detail'">
+      <!-- Back button -->
+      <button @click="goBack" class="flex items-center gap-2 text-gray-800 hover:text-black mb-6 transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+      </button>
+
+      <!-- Title & Header Profile -->
+      <div class="mb-8">
+        <h2 class="text-[17px] font-bold text-[#1E3A8A] mb-4 pb-2 inline-block border-b-2 border-gray-200">
+          Detail Admin: {{ selectedAdmin?.name || 'Alaa Mohamed' }}
+        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="w-20 h-20 rounded-full border-[6px] border-orange-50 overflow-hidden">
+              <img src="https://i.pravatar.cc/150?img=47" alt="Profile" class="w-full h-full object-cover" />
+            </div>
+            <div>
+              <h3 class="text-xl font-bold text-[#1E3A8A]">{{ selectedAdmin?.name || 'Alaa Mohamed' }}</h3>
+              <p class="text-[15px] text-[#1E3A8A]/80">{{ selectedAdmin?.role || 'Admin Validator' }}</p>
+            </div>
+          </div>
+          <button @click="showDeleteModal = true" class="bg-[#EF4444] hover:bg-red-600 text-white px-8 py-3 rounded-xl text-sm font-bold transition-colors self-start sm:self-center shadow-sm">
+            Hapus Akses
+          </button>
+        </div>
+      </div>
+      
+      <!-- Divider -->
+      <div class="border-t border-gray-100 mb-8"></div>
+
+      <!-- Audit Log -->
+      <div>
+        <h3 class="text-lg font-bold text-[#1E3A8A] mb-4">Audit log</h3>
+        <div class="space-y-4">
+          <!-- Log 1 -->
+          <div class="bg-white border border-gray-200 rounded-2xl p-6 flex gap-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-800 font-medium shrink-0">
+              M
+            </div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <span class="px-3 py-1 bg-gray-100 border border-gray-400 rounded-full text-xs font-medium text-gray-700">Pembaruan Sistem</span>
+              </div>
+              <h4 class="text-base font-bold text-gray-900 mt-1">Perubahan komisi platform dari 5% menjadi 7%</h4>
+            </div>
+          </div>
+          
+          <!-- Log 2 -->
+          <div class="bg-white border border-gray-200 rounded-2xl p-6 flex gap-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-800 font-medium shrink-0">
+              M
+            </div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <span class="px-3 py-1 bg-green-50 border border-green-400 rounded-full text-xs font-medium text-green-600">Disetujui</span>
+                <span class="text-[13px] text-gray-400 font-medium">10:30 AM</span>
+              </div>
+              <h4 class="text-base font-bold text-gray-900 mt-1">memverifikasi vendor "CreativeStudioID"</h4>
+              <p class="text-sm text-gray-600 mt-0.5">Banding vendor diterima setelah review log validator.</p>
+            </div>
+          </div>
+
+          <!-- Log 3 -->
+          <div class="bg-white border border-gray-200 rounded-2xl p-6 flex gap-4 shadow-sm">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-800 font-medium shrink-0">
+              M
+            </div>
+            <div>
+              <div class="flex items-center gap-3 mb-2">
+                <span class="px-3 py-1 bg-orange-50 border border-orange-400 rounded-full text-xs font-medium text-orange-600">Suspend</span>
+                <span class="text-[13px] text-gray-400 font-medium">10:30 AM</span>
+              </div>
+              <h4 class="text-base font-bold text-gray-900 mt-1">Admin memblokir vendor EventMaster Studio</h4>
+              <p class="text-sm text-gray-600 mt-0.5">Laporan pelanggaran transaksi oleh client.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- Add Admin Modal Overlay -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showAddModal"
+          class="fixed inset-0 z-[100] flex items-center justify-center"
+          @click.self="closeAddModal"
+        >
+          <!-- Backdrop -->
+          <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" @click="closeAddModal"></div>
+
+          <!-- Modal Content -->
+          <Transition name="modal-scale">
+            <div
+              v-if="showAddModal"
+              class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md mx-4 p-8 z-10"
+            >
+              <!-- Close button -->
+              <button
+                @click="closeAddModal"
+                class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+
+              <!-- Modal Header -->
+              <div class="mb-6">
+                <h3 class="text-xl font-bold text-gray-900">Tambah Admin Baru</h3>
+                <p class="text-sm text-gray-400 mt-1 leading-relaxed">
+                  Tambahkan pengguna admin baru ke sistem. Email undangan akan dikirim ke alamat email mereka.
+                </p>
+              </div>
+
+              <!-- Divider -->
+              <div class="border-t border-gray-100 mb-6"></div>
+
+              <!-- Form -->
+              <form @submit.prevent="submitNewAdmin" class="space-y-5">
+                <!-- Nama Lengkap -->
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Nama lengkap</label>
+                  <input
+                    v-model="newAdmin.name"
+                    type="text"
+                    placeholder="Masukkan nama lengkap"
+                    class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+                  />
+                </div>
+
+                <!-- Email -->
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Email</label>
+                  <input
+                    v-model="newAdmin.email"
+                    type="email"
+                    placeholder="admin@example.com"
+                    class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all"
+                  />
+                </div>
+
+                <!-- Peran -->
+                <div>
+                  <label class="block text-sm font-semibold text-gray-900 mb-2">Peran</label>
+                  <div class="relative">
+                    <select
+                      v-model="newAdmin.role"
+                      class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 font-medium appearance-none bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-all cursor-pointer"
+                    >
+                      <option value="Validator">Validator</option>
+                      <option value="Finance">Finance</option>
+                      <option value="Admin Validator">Admin Validator</option>
+                    </select>
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                      <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex justify-end pt-2">
+                  <button
+                    type="submit"
+                    class="bg-brand-navy text-white px-8 py-3 rounded-full text-sm font-semibold hover:bg-blue-800 shadow-md hover:shadow-lg transition-all"
+                  >
+                    Kirim Undangan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
+    
+    <!-- Delete Admin Modal Overlay -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showDeleteModal"
+          class="fixed inset-0 z-[100] flex items-center justify-center"
+          @click.self="showDeleteModal = false"
+        >
+          <!-- Backdrop -->
+          <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" @click="showDeleteModal = false"></div>
+
+          <!-- Modal Content -->
+          <Transition name="modal-scale">
+            <div
+              v-if="showDeleteModal"
+              class="relative bg-white rounded-3xl shadow-2xl w-full max-w-[400px] mx-4 p-8 z-10"
+            >
+              <!-- Modal Text -->
+              <h3 class="text-[20px] font-bold text-gray-900 mb-3">Hapus Akses Admin?</h3>
+              <p class="text-[15px] text-gray-500 mb-10 leading-relaxed">
+                Anda akan menghapus akses admin dari pengguna ini.
+              </p>
+
+              <!-- Action Button -->
+              <div class="flex justify-center">
+                <button
+                  @click="showDeleteModal = false; goBack()"
+                  class="bg-[#EF4444] hover:bg-red-600 text-white px-10 py-3.5 rounded-xl text-base font-bold transition-colors w-[80%] shadow-sm"
+                >
+                  Hapus Akses
+                </button>
+              </div>
+            </div>
+          </Transition>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <style scoped>
-/* No specific styles needed since Tailwind handles all standard design tokens. */
+/* Modal transition animations */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
+
+.modal-scale-enter-active {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-scale-leave-active {
+  transition: all 0.2s ease-in;
+}
+
+.modal-scale-enter-from {
+  opacity: 0;
+  transform: scale(0.92) translateY(10px);
+}
+
+.modal-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.95) translateY(5px);
+}
 </style>
