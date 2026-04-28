@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 // Layouts
+import ClientLayout from '../layouts/ClientLayout.vue'
 import AuthLayout from '../layouts/AuthLayout.vue'
 import SuperAdminLayout from '../layouts/SuperAdminLayout.vue'
 import AdminFinanceLayout from '../layouts/AdminFinanceLayout.vue'
@@ -8,6 +9,11 @@ import AdminValidatorLayout from '../layouts/AdminValidatorLayout.vue'
 
 // Views - Auth
 import AdminLoginView from '../views/auth/AdminLoginView.vue'
+
+// Views - Client
+import HomeView from '../views/client/HomeView.vue'
+import RoleSelectionView from '../views/auth/RoleSelectionView.vue'
+import UserLoginView from '../views/auth/UserLoginView.vue'
 
 // Views - Super Admin
 import DashboardView from '../views/super-admin/DashboardView.vue'
@@ -19,13 +25,72 @@ import ProfileView from '../views/super-admin/ProfileView.vue'
 import FinanceDashboardView from '../views/finance-admin/DashboardView.vue'
 
 const routes = [
+  // ========================================
+  // CLIENT ROUTES (Default — public facing)
+  // ========================================
   {
     path: '/',
-    redirect: '/admin/login',
+    component: ClientLayout,
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: HomeView,
+      },
+      {
+        path: 'jelajahi',
+        name: 'Explore',
+        component: () => import('../views/client/ExploreView.vue'),
+      },
+      {
+        path: 'jelajahi/:id',
+        name: 'ProductDetail',
+        component: () => import('../views/client/ProductDetailView.vue'),
+      },
+      {
+        path: 'chat',
+        name: 'Chat',
+        component: () => import('../views/client/ChatView.vue'),
+      },
+      {
+        path: 'pesanan',
+        name: 'Orders',
+        component: () => import('../views/client/OrdersView.vue'),
+      },
+      {
+        path: 'pesanan/:id',
+        name: 'OrderDetail',
+        component: () => import('../views/client/OrderDetailView.vue'),
+      },
+      {
+        path: 'pesanan/:id/revisi',
+        name: 'OrderRevision',
+        component: () => import('../views/client/OrderRevisionView.vue'),
+      },
+    ],
   },
+
+  // ========================================
+  // CLIENT AUTH (Role Selection & Login)
+  // ========================================
+  {
+    path: '/daftar',
+    name: 'RoleSelection',
+    component: RoleSelectionView,
+  },
+  {
+    path: '/masuk/user',
+    name: 'UserLogin',
+    component: UserLoginView,
+  },
+
+  // ========================================
+  // ADMIN AUTH
+  // ========================================
   {
     path: '/admin',
     component: AuthLayout,
+    redirect: '/admin/login',
     children: [
       {
         path: 'login',
@@ -34,6 +99,10 @@ const routes = [
       },
     ],
   },
+
+  // ========================================
+  // SUPER ADMIN
+  // ========================================
   {
     path: '/super-admin',
     component: SuperAdminLayout,
@@ -66,6 +135,10 @@ const routes = [
       },
     ],
   },
+
+  // ========================================
+  // FINANCE ADMIN
+  // ========================================
   {
     path: '/finance-admin',
     component: AdminFinanceLayout,
@@ -108,6 +181,10 @@ const routes = [
       },
     ],
   },
+
+  // ========================================
+  // ADMIN VALIDATOR
+  // ========================================
   {
     path: '/admin-validator',
     component: AdminValidatorLayout,
@@ -160,6 +237,10 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  scrollBehavior(_to, _from, savedPosition) {
+    if (savedPosition) return savedPosition
+    return { top: 0 }
+  },
 })
 
 export default router
