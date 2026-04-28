@@ -8,7 +8,7 @@ function goUserLogin() {
 }
 
 function goVendorLogin() {
-  // Future: vendor login route
+  router.push({ name: 'VendorRegister' })
 }
 </script>
 

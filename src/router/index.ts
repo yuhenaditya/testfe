@@ -14,6 +14,10 @@ import AdminLoginView from '../views/auth/AdminLoginView.vue'
 import HomeView from '../views/client/HomeView.vue'
 import RoleSelectionView from '../views/auth/RoleSelectionView.vue'
 import UserLoginView from '../views/auth/UserLoginView.vue'
+import VendorRegisterView from '../views/auth/VendorRegisterView.vue'
+import VendorRegisterUploadView from '../views/auth/VendorRegisterUploadView.vue'
+import VendorRegisterBankView from '../views/auth/VendorRegisterBankView.vue'
+import VendorRegisterSuccessView from '../views/auth/VendorRegisterSuccessView.vue'
 
 // Views - Super Admin
 import DashboardView from '../views/super-admin/DashboardView.vue'
@@ -23,6 +27,11 @@ import ProfileView from '../views/super-admin/ProfileView.vue'
 
 // Views - Finance Admin
 import FinanceDashboardView from '../views/finance-admin/DashboardView.vue'
+
+// Vendor Layout & Views
+import VendorLayout from '../layouts/VendorLayout.vue'
+import VendorDashboardView from '../views/vendor/DashboardView.vue'
+import DocumentVerificationView from '../views/vendor/DocumentVerificationView.vue'
 
 const routes = [
   // ========================================
@@ -77,6 +86,26 @@ const routes = [
     path: '/daftar',
     name: 'RoleSelection',
     component: RoleSelectionView,
+  },
+  {
+    path: '/daftar/vendor',
+    name: 'VendorRegister',
+    component: VendorRegisterView,
+  },
+  {
+    path: '/daftar/vendor/upload',
+    name: 'VendorRegisterUpload',
+    component: VendorRegisterUploadView,
+  },
+  {
+    path: '/daftar/vendor/bank',
+    name: 'VendorRegisterBank',
+    component: VendorRegisterBankView,
+  },
+  {
+    path: '/daftar/vendor/success',
+    name: 'VendorRegisterSuccess',
+    component: VendorRegisterSuccessView,
   },
   {
     path: '/masuk/user',
@@ -229,6 +258,27 @@ const routes = [
         path: 'disputes/:id',
         name: 'ValidatorDisputeDetail',
         component: () => import('../views/admin-validator/DisputeDetailView.vue'),
+      },
+    ],
+  },
+
+  // ========================================
+  // VENDOR ROUTES
+  // ========================================
+  {
+    path: '/vendor',
+    component: VendorLayout,
+    redirect: '/vendor/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: 'VendorDashboard',
+        component: VendorDashboardView,
+      },
+      {
+        path: 'documents',
+        name: 'VendorDocuments',
+        component: DocumentVerificationView,
       },
     ],
   },
