@@ -14,6 +14,10 @@ import AdminLoginView from '../views/auth/AdminLoginView.vue'
 import HomeView from '../views/client/HomeView.vue'
 import RoleSelectionView from '../views/auth/RoleSelectionView.vue'
 import UserLoginView from '../views/auth/UserLoginView.vue'
+import VendorRegisterView from '../views/auth/VendorRegisterView.vue'
+import VendorRegisterUploadView from '../views/auth/VendorRegisterUploadView.vue'
+import VendorRegisterBankView from '../views/auth/VendorRegisterBankView.vue'
+import VendorRegisterSuccessView from '../views/auth/VendorRegisterSuccessView.vue'
 
 // Views - Super Admin
 import DashboardView from '../views/super-admin/DashboardView.vue'
@@ -23,6 +27,13 @@ import ProfileView from '../views/super-admin/ProfileView.vue'
 
 // Views - Finance Admin
 import FinanceDashboardView from '../views/finance-admin/DashboardView.vue'
+
+// Vendor Layout & Views
+import VendorLayout from '../layouts/VendorLayout.vue'
+import VendorDashboardView from '../views/vendor/DashboardView.vue'
+import DocumentVerificationView from '../views/vendor/DocumentVerificationView.vue'
+import CatalogView from '../views/vendor/CatalogView.vue'
+import AddGigView from '../views/vendor/AddGigView.vue'
 
 const routes = [
   // ========================================
@@ -77,6 +88,26 @@ const routes = [
     path: '/daftar',
     name: 'RoleSelection',
     component: RoleSelectionView,
+  },
+  {
+    path: '/daftar/vendor',
+    name: 'VendorRegister',
+    component: VendorRegisterView,
+  },
+  {
+    path: '/daftar/vendor/upload',
+    name: 'VendorRegisterUpload',
+    component: VendorRegisterUploadView,
+  },
+  {
+    path: '/daftar/vendor/bank',
+    name: 'VendorRegisterBank',
+    component: VendorRegisterBankView,
+  },
+  {
+    path: '/daftar/vendor/success',
+    name: 'VendorRegisterSuccess',
+    component: VendorRegisterSuccessView,
   },
   {
     path: '/masuk/user',
@@ -229,6 +260,107 @@ const routes = [
         path: 'disputes/:id',
         name: 'ValidatorDisputeDetail',
         component: () => import('../views/admin-validator/DisputeDetailView.vue'),
+      },
+    ],
+  },
+
+  // ========================================
+  // VENDOR ROUTES
+  // ========================================
+  {
+    path: '/vendor',
+    component: VendorLayout,
+    redirect: '/vendor/dashboard',
+    children: [
+      {
+        path: 'dashboard',
+        name: 'VendorDashboard',
+        component: VendorDashboardView,
+      },
+      {
+        path: 'associate/dashboard',
+        name: 'VendorAssociateDashboard',
+        component: () => import('../views/vendor/AssociateDashboardView.vue'),
+      },
+      {
+        path: 'associate/catalog',
+        name: 'VendorAssociateCatalog',
+        component: () => import('../views/vendor/AssociateCatalogView.vue'),
+      },
+      {
+        path: 'associate/messages',
+        name: 'VendorAssociateMessages',
+        component: () => import('../views/vendor/AssociateMessagesView.vue'),
+      },
+      {
+        path: 'associate/orders',
+        name: 'VendorAssociateOrders',
+        component: () => import('../views/vendor/AssociateOrdersView.vue'),
+      },
+      {
+        path: 'associate/orders/:id',
+        name: 'VendorAssociateOrderDetail',
+        component: () => import('../views/vendor/AssociateOrderDetailView.vue'),
+      },
+      {
+        path: 'finance',
+        name: 'VendorFinance',
+        component: () => import('../views/vendor/WalletView.vue'),
+      },
+      {
+        path: 'withdraw',
+        name: 'VendorWithdraw',
+        component: () => import('../views/vendor/WithdrawView.vue'),
+      },
+      {
+        path: 'orders',
+        name: 'VendorOrders',
+        component: () => import('../views/vendor/TasksView.vue'),
+      },
+      {
+        path: 'orders/:id',
+        name: 'VendorOrderDetail',
+        component: () => import('../views/vendor/TaskDetailView.vue'),
+      },
+      {
+        path: 'orders/:id/appeal',
+        name: 'VendorOrderAppeal',
+        component: () => import('../views/vendor/AppealView.vue'),
+      },
+      {
+        path: 'documents',
+        name: 'VendorDocuments',
+        component: DocumentVerificationView,
+      },
+      {
+        path: 'messages',
+        name: 'VendorMessages',
+        component: () => import('../views/vendor/MessagesView.vue'),
+      },
+      {
+        path: 'catalog',
+        name: 'VendorCatalog',
+        component: CatalogView,
+      },
+      {
+        path: 'catalog/add',
+        name: 'VendorCatalogAdd',
+        component: AddGigView,
+      },
+      {
+        path: 'catalog/edit/:id',
+        name: 'VendorCatalogEdit',
+        component: () => import('../views/vendor/EditGigView.vue'),
+      },
+      {
+        path: 'catalog/promote/:id',
+        name: 'VendorCatalogPromote',
+        component: () => import('../views/vendor/PromoteGigView.vue'),
+      },
+      {
+        path: 'catalog/promote/:id/payment',
+        name: 'VendorCatalogPromotePayment',
+        component: () => import('../views/vendor/PromoteGigPaymentView.vue'),
       },
     ],
   },

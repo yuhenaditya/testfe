@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
 import { useAuth } from '../../composables/useAuth'
 
-const router = useRouter()
-const { login } = useAuth()
+const { loginMutation } = useAuth()
 
 const form = reactive({
   email: '',
@@ -13,26 +11,17 @@ const form = reactive({
 
 const showPassword = ref(false)
 const rememberMe = ref(false)
-const isLoading = ref(false)
 
 function togglePassword() {
   showPassword.value = !showPassword.value
 }
 
-async function handleLogin() {
+function handleLogin() {
   if (!form.email || !form.password) return
-  isLoading.value = true
-  // Simulate API call
-  setTimeout(() => {
-    login({
-      name: form.email.split('@')[0],
-      email: form.email,
-      avatar: '',
-      role: 'user',
-    })
-    isLoading.value = false
-    router.push('/jelajahi')
-  }, 1000)
+  loginMutation.mutate({
+    email: form.email,
+    password: form.password,
+  })
 }
 </script>
 
@@ -130,13 +119,14 @@ async function handleLogin() {
             <button
               type="submit"
               class="login-submit"
-              :class="{ 'login-submit--loading': isLoading }"
-              :disabled="isLoading"
+              :class="{ 'login-submit--loading': loginMutation.isPending.value }"
+              :disabled="loginMutation.isPending.value"
             >
-              <svg v-if="isLoading" class="login-submit__spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 019.95 9"/></svg>
-              <span v-if="!isLoading">Masuk</span>
+              <svg v-if="loginMutation.isPending.value" class="login-submit__spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 019.95 9"/></svg>
+              <span v-if="!loginMutation.isPending.value">Masuk</span>
               <span v-else>Memproses...</span>
             </button>
+            <p v-if="loginMutation.isError.value" class="text-red-500 text-sm font-medium text-center mt-2">Email atau password salah.</p>
           </form>
 
           <p class="login-page__register-text">
