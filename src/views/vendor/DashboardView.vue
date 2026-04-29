@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Button from '../../components/ui/Button.vue'
-const merchantStatus = ref<'INCOMPLETE' | 'PENDING_VERIFICATION' | 'REJECTED' | 'VERIFIED'>('PENDING_VERIFICATION')
+const merchantStatus = ref<'INCOMPLETE' | 'PENDING_VERIFICATION' | 'REJECTED' | 'VERIFIED'>('VERIFIED')
 const tasks = ref([
   {
     id: '#ORD-8821',
@@ -118,7 +118,7 @@ const messages = ref([
       <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center">
           <h2 class="text-lg font-bold text-gray-900">Daftar Tugas (Pesanan Aktif)</h2>
-          <button class="text-brand-blue font-semibold hover:text-brand-navy transition-colors">View<br/>All</button>
+          <router-link to="/vendor/orders" class="text-[#4B6BFB] font-semibold hover:text-[#4B6BFB]/80 transition-colors text-right">Lihat<br/>Semua</router-link>
         </div>
         
         <div class="p-6 flex flex-col gap-4">
@@ -172,30 +172,31 @@ const messages = ref([
         </div>
         
         <div class="flex flex-col flex-1">
-          <div 
+          <router-link 
             v-for="msg in messages" 
             :key="msg.id"
+            to="/vendor/messages"
             class="p-5 border-b border-gray-50 hover:bg-gray-50 transition-colors cursor-pointer flex gap-4"
           >
             <img :src="msg.avatar" alt="Avatar" class="w-10 h-10 rounded-full object-cover shrink-0" />
             <div class="flex-1 min-w-0">
               <div class="flex justify-between items-center mb-1">
                 <h4 class="font-bold text-gray-900 text-sm">{{ msg.name }}</h4>
-                <span class="text-xs text-brand-blue font-medium">{{ msg.time }}</span>
+                <span class="text-xs text-[#4B6BFB] font-medium">{{ msg.time }}</span>
               </div>
               <p class="text-sm text-gray-600 truncate">{{ msg.text }}</p>
             </div>
             <div v-if="msg.unread" class="flex flex-col justify-center shrink-0">
-              <span class="w-5 h-5 rounded-full bg-brand-blue text-white text-[10px] font-bold flex items-center justify-center">{{ msg.unread }}</span>
+              <span class="w-5 h-5 rounded-full bg-[#4B6BFB] text-white text-[10px] font-bold flex items-center justify-center">{{ msg.unread }}</span>
             </div>
-          </div>
+          </router-link>
         </div>
         
         <div class="p-6 mt-auto text-center">
-          <button class="text-brand-blue font-bold text-sm hover:text-brand-navy flex items-center justify-center gap-2 mx-auto">
+          <router-link to="/vendor/messages" class="text-[#4B6BFB] font-bold text-sm hover:text-brand-navy flex items-center justify-center gap-2 mx-auto">
             Lihat semua pesan
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-          </button>
+          </router-link>
         </div>
       </div>
     </div>

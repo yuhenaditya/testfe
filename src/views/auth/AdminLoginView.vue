@@ -1,36 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useAuth } from '../../composables/useAuth'
 
-const router = useRouter()
+const { loginMutation } = useAuth()
 
 const email = ref('')
 const password = ref('')
-const isLoading = ref(false)
 const showPassword = ref(false)
-const errorMessage = ref('')
-
-const dummyUsers = [
-  { username: 'superadmin', password: 'super123', role: 'super-admin', redirect: '/super-admin/dashboard' },
-  { username: 'finance', password: 'finance123', role: 'finance-admin', redirect: '/finance-admin/dashboard' },
-  { username: 'validator', password: 'validator123', role: 'admin-validator', redirect: '/admin-validator/dashboard' },
-]
 
 function handleLogin() {
-  errorMessage.value = ''
-  const user = dummyUsers.find(u => u.username === email.value && u.password === password.value)
-
-  if (!user) {
-    errorMessage.value = 'Username atau password salah.'
-    return
-  }
-
-  isLoading.value = true
-  setTimeout(() => {
-    isLoading.value = false
-    localStorage.setItem('userRole', user.role)
-    router.push(user.redirect)
-  }, 800)
+  loginMutation.mutate({
+    email: email.value,
+    password: password.value,
+  })
 }
 </script>
 
@@ -86,14 +68,18 @@ function handleLogin() {
           <!-- Submit Button -->
           <button 
             type="submit" 
-            :disabled="isLoading"
-            class="w-full bg-[#5FA3FB] hover:bg-blue-500 text-white font-bold py-4 rounded-[14px] transition-colors mt-2 text-sm tracking-wide"
+            :disabled="loginMutation.isPending.value"
+            class="w-full bg-[#5FA3FB] hover:bg-blue-500 text-white font-bold py-4 rounded-[14px] transition-colors mt-2 text-sm tracking-wide flex justify-center items-center gap-2"
           >
-            <span v-if="isLoading">Memproses...</span>
+            <svg v-if="loginMutation.isPending.value" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span v-if="loginMutation.isPending.value">Memproses...</span>
             <span v-else>Masuk</span>
           </button>
           <!-- Error Message -->
-          <p v-if="errorMessage" class="text-red-500 text-sm font-medium text-center mt-3">{{ errorMessage }}</p>
+          <p v-if="loginMutation.isError.value" class="text-red-500 text-sm font-medium text-center mt-3">Username atau kata sandi salah.</p>
 
         </form>
       </div>

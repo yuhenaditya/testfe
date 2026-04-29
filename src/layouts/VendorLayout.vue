@@ -1,20 +1,45 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '../store/auth.store'
 
 const route = useRoute()
+const authStore = useAuthStore()
 
-const menuItems = [
-  { name: 'Beranda', path: '/vendor/dashboard', icon: 'home' },
-  { name: 'Katalog', path: '/vendor/catalog', icon: 'catalog' },
-  { name: 'Keuangan', path: '/vendor/finance', icon: 'wallet' },
-  { name: 'Pesanan', path: '/vendor/orders', icon: 'hammer' },
-  { name: 'Pengaturan', path: '/vendor/settings', icon: 'settings' },
-  { name: 'Laporan', path: '/vendor/reports', icon: 'report' },
-  { name: 'Pesan', path: '/vendor/messages', icon: 'document' },
-  { name: 'Peringatan', path: '/vendor/alerts', icon: 'alert' },
-  { name: 'Bantuan', path: '/vendor/help', icon: 'wrench' },
-]
+const userRole = computed(() => authStore.user?.role?.toUpperCase() || 'MERCHANT_OWNER')
+
+const menuItems = computed(() => {
+  const baseItems = [
+    { 
+      name: 'Beranda', 
+      path: userRole.value === 'MERCHANT_ASSOCIATE' ? '/vendor/associate/dashboard' : '/vendor/dashboard', 
+      icon: 'home' 
+    },
+    { 
+      name: 'Katalog', 
+      path: userRole.value === 'MERCHANT_ASSOCIATE' ? '/vendor/associate/catalog' : '/vendor/catalog', 
+      icon: 'catalog' 
+    },
+    { name: 'Keuangan', path: '/vendor/finance', icon: 'wallet' },
+    { 
+      name: 'Pesanan', 
+      path: userRole.value === 'MERCHANT_ASSOCIATE' ? '/vendor/associate/orders' : '/vendor/orders', 
+      icon: 'hammer' 
+    },
+    { name: 'Pengaturan', path: '/vendor/settings', icon: 'settings' },
+    { name: 'Laporan', path: '/vendor/reports', icon: 'report' },
+    { name: 'Pesan', path: userRole.value === 'MERCHANT_ASSOCIATE' ? '/vendor/associate/messages' : '/vendor/messages', icon: 'document' },
+    { name: 'Peringatan', path: '/vendor/alerts', icon: 'alert' },
+    { name: 'Bantuan', path: '/vendor/help', icon: 'wrench' },
+  ]
+
+  // Filter Keuangan for associates
+  if (userRole.value === 'MERCHANT_ASSOCIATE') {
+    return baseItems.filter(item => item.icon !== 'wallet')
+  }
+
+  return baseItems
+})
 
 const currentPath = computed(() => route.path)
 </script>
