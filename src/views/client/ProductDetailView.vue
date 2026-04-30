@@ -17,7 +17,7 @@ const plans: Record<PlanKey, { name: string; price: string; features: string[] }
 const compareTable = [
   { feature: 'Pilihan Desain', basic: '1 Section', standard: '5 Section', premium: '12 Section' },
   { feature: 'Revisi', basic: '1x', standard: '3x', premium: 'Unlimited' },
-  { feature: 'Pengerjaan', basic: '3 Hari', standard: '7 Hari', premium: '14 Hari' },
+  { feature: 'Pengerjaan', basic: '3  Hari', standard: '7 Hari', premium: '14 Hari' },
 ]
 
 const reviews = [

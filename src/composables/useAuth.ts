@@ -1,10 +1,18 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '../store/auth.store'
 import { useRouter } from 'vue-router'
 
 export function useAuth() {
   const authStore = useAuthStore()
   const router = useRouter()
+
+  const isLoggedIn = computed(() => authStore.isAuthenticated)
+  const user = computed(() => authStore.currentUser)
+  
+  const logout = () => {
+    authStore.logout()
+    router.push('/')
+  }
 
   const loginMutation = {
     isPending: ref(false),
@@ -15,27 +23,27 @@ export function useAuth() {
       
       setTimeout(() => {
         loginMutation.isPending.value = false
-        // Mock successful login
+        // Mock successful login — User login always creates a CLIENT role
         const fakeUser = {
           id: '1',
-          name: 'Vendor User',
+          name: 'Budi',
           email: payload.email,
-          role: 'MERCHANT'
+          role: 'CLIENT'
         }
         authStore.setAuth(fakeUser, 'fake_token_123')
         
+        // Route based on role
         const role = fakeUser.role.toUpperCase()
         if (role.includes('SUPER_ADMIN') || role === 'SUPERADMIN') {
           router.push('/super-admin/dashboard')
         } else if (role.includes('FINANCE')) {
           router.push('/finance-admin/dashboard')
-        } else if (role.includes('VALIDATOR') || role === 'ADMIN_VALIDATOR') {
-          router.push('/admin-validator/dashboard')
         } else if (role === 'MERCHANT_OWNER' || role === 'MERCHANT' || role === 'VENDOR') {
           router.push('/vendor/dashboard')
         } else if (role === 'MERCHANT_ASSOCIATE') {
           router.push('/vendor/associate/dashboard')
         } else {
+          // CLIENT and any other role → client pages
           router.push('/jelajahi')
         }
       }, 1000)
@@ -64,6 +72,9 @@ export function useAuth() {
   }
 
   return {
+    isLoggedIn,
+    user,
+    logout,
     loginMutation,
     registerVendorMutation
   }

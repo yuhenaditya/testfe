@@ -11,13 +11,12 @@ const roles = [
   { id: 'MERCHANT_OWNER', name: 'Merchant Owner', icon: '👑' },
   { id: 'MERCHANT_ASSOCIATE', name: 'Merchant Associate', icon: '🧑‍💼' },
   { id: 'CLIENT', name: 'Client (Buyer)', icon: '🛒' },
-  { id: 'ADMIN_VALIDATOR', name: 'Admin Validator', icon: '⚖️' },
 ]
 
 const switchRole = (role: string) => {
   const fakeUser = {
     id: 'demo-' + role.toLowerCase(),
-    name: 'Demo ' + role.replace('_', ' '),
+    name: role === 'CLIENT' ? 'Budi' : 'Demo ' + role.replace('_', ' '),
     email: 'demo@example.com',
     role: role
   }
@@ -29,9 +28,8 @@ const switchRole = (role: string) => {
     router.push('/vendor/dashboard')
   } else if (role === 'MERCHANT_ASSOCIATE') {
     router.push('/vendor/associate/dashboard')
-  } else if (role === 'ADMIN_VALIDATOR') {
-    router.push('/admin-validator/dashboard')
   } else {
+    // CLIENT → client pages
     router.push('/jelajahi')
   }
   
