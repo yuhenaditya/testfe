@@ -7,11 +7,27 @@ const { loginMutation } = useAuth()
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
+const loginError = ref(false)
 
 function handleLogin() {
+  loginError.value = false
+  let role = ''
+
+  if (email.value === 'super' && password.value === 'super123') {
+    role = 'SUPER_ADMIN'
+  } else if (email.value === 'finance' && password.value === 'finance123') {
+    role = 'FINANCE_ADMIN'
+  } else if (email.value === 'validator' && password.value === 'validator123') {
+    role = 'ADMIN_VALIDATOR'
+  } else {
+    loginError.value = true
+    return
+  }
+
   loginMutation.mutate({
     email: email.value,
     password: password.value,
+    role: role,
   })
 }
 </script>
@@ -79,7 +95,7 @@ function handleLogin() {
             <span v-else>Masuk</span>
           </button>
           <!-- Error Message -->
-          <p v-if="loginMutation.isError.value" class="text-red-500 text-sm font-medium text-center mt-3">Username atau kata sandi salah.</p>
+          <p v-if="loginError || loginMutation.isError.value" class="text-red-500 text-sm font-medium text-center mt-3">Username atau kata sandi salah.</p>
 
         </form>
       </div>

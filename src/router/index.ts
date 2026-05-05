@@ -78,6 +78,21 @@ const routes = [
         name: 'OrderRevision',
         component: () => import('../views/client/OrderRevisionView.vue'),
       },
+      {
+        path: 'jelajahi/:id/konfirmasi',
+        name: 'OrderConfirmation',
+        component: () => import('../views/client/OrderConfirmationView.vue'),
+      },
+      {
+        path: 'jelajahi/:id/checkout',
+        name: 'Checkout',
+        component: () => import('../views/client/CheckoutView.vue'),
+      },
+      {
+        path: 'jelajahi/:id/verifikasi',
+        name: 'PaymentVerification',
+        component: () => import('../views/client/PaymentVerificationView.vue'),
+      },
     ],
   },
 

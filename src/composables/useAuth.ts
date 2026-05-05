@@ -26,9 +26,9 @@ export function useAuth() {
         // Mock successful login — User login always creates a CLIENT role
         const fakeUser = {
           id: '1',
-          name: 'Budi',
+          name: payload.role ? payload.role.replace('_', ' ') : 'Budi',
           email: payload.email,
-          role: 'CLIENT'
+          role: payload.role || 'CLIENT'
         }
         authStore.setAuth(fakeUser, 'fake_token_123')
         
@@ -38,6 +38,8 @@ export function useAuth() {
           router.push('/super-admin/dashboard')
         } else if (role.includes('FINANCE')) {
           router.push('/finance-admin/dashboard')
+        } else if (role.includes('VALIDATOR') || role === 'ADMIN_VALIDATOR') {
+          router.push('/admin-validator/dashboard')
         } else if (role === 'MERCHANT_OWNER' || role === 'MERCHANT' || role === 'VENDOR') {
           router.push('/vendor/dashboard')
         } else if (role === 'MERCHANT_ASSOCIATE') {

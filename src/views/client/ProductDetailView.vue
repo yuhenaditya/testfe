@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const productId = route.params.id
+
+function navigateToOrder() {
+  router.push({ name: 'OrderConfirmation', params: { id: productId as string } })
+}
 
 type PlanKey = 'basic' | 'standard' | 'premium'
 const selectedPlan = ref<PlanKey>('standard')
@@ -157,7 +162,7 @@ onMounted(() => {
                 </li>
               </ul>
 
-              <button class="pricing-card__cta">Pesan Sekarang</button>
+              <button class="pricing-card__cta" @click="navigateToOrder">Pesan Sekarang</button>
               <button class="pricing-card__contact">Hubungi Penjual</button>
 
               <p class="pricing-card__note">
