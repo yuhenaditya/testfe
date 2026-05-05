@@ -40,6 +40,13 @@ const formatCurrency = (val: number) => {
   }).format(val)
 }
 
+const formatNumber = (val: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(val)
+}
+
 function nextStep() {
   if (currentStep.value < 3) currentStep.value++
 }
@@ -111,7 +118,7 @@ function finishProcess() {
             
             <div class="flex items-end gap-2 mb-6 relative z-10">
               <span class="text-xl font-bold text-gray-400 mb-1">RP</span>
-              <span class="text-5xl font-black text-[#0B4086] tracking-tight">14.285.4Jt</span>
+              <span class="text-4xl lg:text-5xl font-black text-[#0B4086] tracking-tight">{{ formatNumber(14285400000) }}</span>
             </div>
             
             <div class="flex items-center gap-3 relative z-10">
@@ -136,7 +143,7 @@ function finishProcess() {
               <p class="text-lg font-medium text-white/90 mb-2">Total Pendapatan Kotor</p>
               <div class="flex items-end gap-2">
                 <span class="text-xl font-bold text-white/50 mb-1">RP</span>
-                <span class="text-6xl font-black tracking-tight">2,49Jt</span>
+                <span class="text-4xl lg:text-5xl font-black tracking-tight">{{ formatNumber(2490000000) }}</span>
               </div>
             </div>
           </div>
