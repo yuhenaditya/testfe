@@ -57,11 +57,7 @@ onUnmounted(() => {
     <div class="navbar__inner">
       <!-- Logo -->
       <router-link to="/" class="navbar__logo" aria-label="Home">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="32" height="32" rx="8" fill="#3B5BDB"/>
-          <path d="M10 10C10 10 14 22 16 22C18 22 22 10 22 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="16" cy="10" r="2" fill="white"/>
-        </svg>
+        <img src="/images/logo.png" alt="LayananPro Logo" class="navbar__logo-img" width="32" height="32" />
         <span class="navbar__logo-text">LayananPro</span>
       </router-link>
 

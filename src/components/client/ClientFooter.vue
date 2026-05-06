@@ -15,11 +15,7 @@
       <div class="footer__grid">
         <div class="footer__brand">
           <router-link to="/" class="footer__logo" aria-label="Home">
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="8" fill="#3B5BDB"/>
-              <path d="M10 10C10 10 14 22 16 22C18 22 22 10 22 10" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-              <circle cx="16" cy="10" r="2" fill="white"/>
-            </svg>
+            <img src="/images/logo.png" alt="LayananPro Logo" width="32" height="32" />
             <span>LayananPro</span>
           </router-link>
           <p class="footer__brand-desc">Platform terpercaya untuk menghubungkan klien dengan vendor profesional terbaik di bidangnya.</p>

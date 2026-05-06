@@ -9,10 +9,10 @@ import AdminValidatorLayout from '../layouts/AdminValidatorLayout.vue'
 
 // Views - Auth
 import AdminLoginView from '../views/auth/AdminLoginView.vue'
+import RegisterView from '../views/auth/RegisterView.vue'
 
 // Views - Client
 import HomeView from '../views/client/HomeView.vue'
-import RoleSelectionView from '../views/auth/RoleSelectionView.vue'
 import UserLoginView from '../views/auth/UserLoginView.vue'
 import VendorRegisterView from '../views/auth/VendorRegisterView.vue'
 import VendorRegisterUploadView from '../views/auth/VendorRegisterUploadView.vue'
@@ -101,9 +101,16 @@ const routes = [
   // ========================================
   {
     path: '/daftar',
-    name: 'RoleSelection',
-    component: RoleSelectionView,
+    name: 'Register',
+    component: RegisterView,
   },
+  {
+    path: '/masuk',
+    name: 'UserLogin',
+    component: UserLoginView,
+    alias: '/masuk/user',
+  },
+  // Legacy vendor register sub-routes (kept for backward compat)
   {
     path: '/daftar/vendor',
     name: 'VendorRegister',
@@ -123,11 +130,6 @@ const routes = [
     path: '/daftar/vendor/success',
     name: 'VendorRegisterSuccess',
     component: VendorRegisterSuccessView,
-  },
-  {
-    path: '/masuk/user',
-    name: 'UserLogin',
-    component: UserLoginView,
   },
 
   // ========================================
