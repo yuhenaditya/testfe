@@ -1,57 +1,292 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import FileUpload from '../../components/ui/FileUpload.vue'
-import Button from '../../components/ui/Button.vue'
 
 const router = useRouter()
-const ktmFile = ref<File | null>(null)
-const portofolioFile = ref<File | null>(null)
 
-function handleSubmit() {
-  // Navigation to success or dashboard
-  router.push('/vendor/dashboard')
+// Mock verification status: 'PENDING_VERIFICATION' | 'REJECTED' | 'ACTIVE'
+const status = ref<'PENDING_VERIFICATION' | 'REJECTED' | 'ACTIVE'>('PENDING_VERIFICATION')
+
+// Mock store data
+const store = ref({
+  name: 'Pixel Perfect Design Studio',
+  category: 'Creative Services',
+  description: 'Kami menyediakan jasa desain UI/UX modern, branding identitas, dan ilustrasi kustom untuk startup dan UMKM. Berpengalaman lebih dari 5 tahun di industri kreatif.',
+  bankName: 'Bank Central Asia (BCA)',
+  bankAccount: '**** 8892',
+  banner: '/images/products/product-1.jpg',
+})
+
+const documents = ref([
+  { name: 'KTP / Identitas', file: 'ktp_john.pdf', status: 'PENDING_VERIFICATION' },
+  { name: 'SK Organisasi', file: 'SK_Organisasi.pdf', status: 'PENDING_VERIFICATION' },
+  { name: 'Portfolio Link', file: 'pixelperfect.net', status: 'PENDING_VERIFICATION', isLink: true },
+])
+
+const validatorNote = ref('')
+
+// Demo controls
+function setDemo(s: 'PENDING_VERIFICATION' | 'REJECTED' | 'ACTIVE') {
+  status.value = s
+  if (s === 'REJECTED') {
+    documents.value[0].status = 'ACTIVE'
+    documents.value[1].status = 'PENDING_VERIFICATION'
+    documents.value[2].status = 'ACTIVE'
+    validatorNote.value = '"Terima kasih telah bergabung dengan VendorFlow. Kami membutuhkan verifikasi tambahan pada dokumen SK Organisasi Anda karena resolusi gambar terlalu rendah. Bagian tanda tangan dan cap basah harus terlihat jelas agar kami dapat memvalidasi keaslian dokumen."'
+  } else if (s === 'ACTIVE') {
+    documents.value.forEach(d => d.status = 'ACTIVE')
+    validatorNote.value = '"Terima kasih telah bergabung dengan VendorFlow. Kami membutuhkan verifikasi tambahan pada dokumen SK Organisasi Anda karena resolusi gambar terlalu rendah. Bagian tanda tangan dan cap basah harus terlihat jelas agar kami dapat memvalidasi keaslian dokumen."'
+  } else {
+    documents.value.forEach(d => d.status = 'PENDING_VERIFICATION')
+    validatorNote.value = ''
+  }
+}
+
+function docStatusLabel(s: string) {
+  if (s === 'ACTIVE') return 'Terverifikasi'
+  return 'Menunggu'
+}
+
+function docStatusClass(s: string) {
+  if (s === 'ACTIVE') return 'doc-badge--green'
+  return 'doc-badge--orange'
 }
 </script>
 
 <template>
-  <div class="p-8 max-w-4xl">
-    <div class="mb-8">
-      <h1 class="text-[28px] font-bold text-gray-900 mb-2">Upload Dokumen Verifikasi</h1>
-      <p class="text-gray-700 text-base">Untuk menjaga keamanan sistem, upload dokumen disini!</p>
+  <div class="pv-page">
+    <!-- Back -->
+    <button class="pv-back" @click="router.back()" aria-label="Kembali">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+
+    <h1 class="pv-title">Profil & Verifikasi</h1>
+    <p class="pv-subtitle">Kelola identitas toko Anda dan pantau proses verifikasi akun.</p>
+
+    <!-- Demo Toggle (dev only) -->
+    <div class="pv-demo">
+      <span>Demo:</span>
+      <button :class="{ active: status === 'PENDING_VERIFICATION' }" @click="setDemo('PENDING_VERIFICATION')">Pending</button>
+      <button :class="{ active: status === 'REJECTED' }" @click="setDemo('REJECTED')">Rejected</button>
+      <button :class="{ active: status === 'ACTIVE' }" @click="setDemo('ACTIVE')">Active</button>
     </div>
 
-    <form @submit.prevent="handleSubmit" class="flex flex-col gap-6 max-w-xl">
-      <FileUpload 
-        v-model:file="ktmFile"
-        accept=".docx,.pdf,.txt"
-        dragText="Choose Document or drag and drop it here"
-        formatText="DOCX, PDF, and TXT"
-      >
-        <template #label>
-          Doc - Upload <span class="font-bold">KTM / SK Organisasi</span> disini
-        </template>
-      </FileUpload>
+    <!-- Status Banner -->
+    <div class="pv-banner" :class="`pv-banner--${status}`">
+      <div class="pv-banner__icon">
+        <!-- Pending -->
+        <svg v-if="status === 'PENDING_VERIFICATION'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <!-- Rejected -->
+        <svg v-else-if="status === 'REJECTED'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <!-- Active -->
+        <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div class="pv-banner__text">
+        <strong v-if="status === 'PENDING_VERIFICATION'">Sedang Ditinjau</strong>
+        <strong v-else-if="status === 'REJECTED'">Pengajuan toko Anda belum dapat disetujui.</strong>
+        <strong v-else>Toko Anda berhasil diverifikasi! 🎉</strong>
+        <p v-if="status === 'PENDING_VERIFICATION'">Tim verifikator kami sedang memeriksa dokumen Anda. Proses ini biasanya memakan waktu 1-2 hari kerja.</p>
+        <p v-else-if="status === 'REJECTED'">Foto KTM kurang jelas (buram) sehingga tidak dapat diverifikasi. Silakan perbaiki data dan kirim ulang untuk proses verifikasi.</p>
+        <p v-else>Sekarang Anda sudah dapat mulai menawarkan layanan dan menerima pesanan.</p>
+      </div>
+      <span class="pv-banner__badge" :class="`pv-banner__badge--${status}`">
+        {{ status === 'PENDING_VERIFICATION' ? 'PENDING_VERIFICATION' : status === 'REJECTED' ? 'DITOLAK' : 'ACTIVE' }}
+      </span>
+    </div>
 
-      <FileUpload 
-        v-model:file="portofolioFile"
-        accept=".docx,.pdf,.txt"
-        dragText="Choose Document or drag and drop it here"
-        formatText="DOCX, PDF, and TXT"
-      >
-        <template #label>
-          Doc - Upload <span class="font-bold">Portofolio</span> disini
-        </template>
-      </FileUpload>
+    <!-- Identitas Toko -->
+    <section class="pv-section">
+      <div class="pv-section__head">
+        <div class="pv-section__icon pv-section__icon--blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+        <div>
+          <h2>Identitas Toko</h2>
+          <p>Informasi publik yang akan dilihat oleh pelanggan Anda.</p>
+        </div>
+      </div>
 
-      <Button type="submit" variant="primary" class="w-full mt-2 h-14 rounded-xl text-xl font-medium relative flex items-center justify-center">
-        Submit For Review
-        <span class="absolute right-4 w-8 h-8 bg-white text-brand-navy rounded-full flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-            <path fill-rule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clip-rule="evenodd" />
-          </svg>
-        </span>
-      </Button>
-    </form>
+      <!-- Banner + Logo overlay -->
+      <div class="pv-store-banner">
+        <img :src="store.banner" alt="Store banner" class="pv-store-banner__img" />
+        <div class="pv-store-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <span v-if="status === 'REJECTED'" class="pv-store-badge pv-store-badge--red">DITOLAK</span>
+      </div>
+
+      <h3 class="pv-store-name">{{ store.name }}</h3>
+      <span class="pv-store-cat">{{ store.category }}</span>
+
+      <div class="pv-detail-block">
+        <label>DESKRIPSI SINGKAT</label>
+        <p>{{ store.description }}</p>
+      </div>
+
+      <div class="pv-detail-block">
+        <label>METODE PEMBAYARAN</label>
+        <p>{{ store.bankName }}<br/><span class="pv-muted">Rek: {{ store.bankAccount }}</span></p>
+        <button class="pv-link-btn">Ubah Informasi</button>
+      </div>
+    </section>
+
+    <!-- Keamanan Akun -->
+    <div class="pv-security">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <div>
+        <strong>Keamanan Akun</strong>
+        <p>Pastikan data Anda selalu up-to-date. VendorFlow tidak pernah meminta kata sandi atau PIN melalui kanal komunikasi tidak resmi.</p>
+      </div>
+    </div>
+
+    <!-- Dokumen Verifikasi -->
+    <h2 class="pv-section-title">Dokumen Verifikasi</h2>
+    <div class="pv-docs">
+      <div v-for="doc in documents" :key="doc.name" class="pv-doc">
+        <div class="pv-doc__icon">
+          <svg v-if="!doc.isLink" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div class="pv-doc__info">
+          <span class="pv-doc__name">{{ doc.name }}</span>
+          <span class="pv-doc__file">{{ doc.file }}</span>
+        </div>
+        <span class="doc-badge" :class="docStatusClass(doc.status)">{{ docStatusLabel(doc.status) }}</span>
+        <button class="pv-doc__action" aria-label="Open">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Catatan Validator -->
+    <template v-if="validatorNote && (status === 'REJECTED' || status === 'ACTIVE')">
+      <h2 class="pv-section-title">Catatan Validator</h2>
+      <div class="pv-validator-note">
+        <p>{{ validatorNote }}</p>
+        <div class="pv-validator-note__author">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Verification Team</span>
+        </div>
+      </div>
+    </template>
+
+    <!-- Butuh Bantuan -->
+    <div class="pv-help">
+      <strong>Butuh Bantuan?</strong>
+      <p>Hubungi pusat bantuan kami jika Anda mengalami kesulitan dalam proses verifikasi atau pengunggahan dokumen.</p>
+      <button class="pv-help__btn">Hubungi CS</button>
+    </div>
+
+    <!-- Bottom Action -->
+    <div class="pv-bottom">
+      <button v-if="status === 'ACTIVE'" class="pv-btn pv-btn--green" @click="router.push('/vendor/dashboard')">
+        Mulai kelola Toko
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
+      <button v-else class="pv-btn pv-btn--blue">Edit Data</button>
+    </div>
   </div>
 </template>
+
+<style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+.pv-page { max-width:640px; margin:0 auto; padding:1.5rem 1.5rem 6rem; font-family:'Plus Jakarta Sans',system-ui,sans-serif; }
+
+/* Back */
+.pv-back { width:32px; height:32px; border-radius:50%; border:1.5px solid #E5E7EB; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#374151; transition:border-color .2s; margin-bottom:1rem; }
+.pv-back:hover { border-color:#2563EB; }
+
+.pv-title { font-size:1.5rem; font-weight:800; color:#0F172A; margin:0; }
+.pv-subtitle { font-size:.8rem; color:#6B7280; margin:.25rem 0 1.25rem; }
+
+/* Demo toggle */
+.pv-demo { display:flex; gap:.5rem; align-items:center; margin-bottom:1.25rem; font-size:.7rem; color:#9CA3AF; }
+.pv-demo button { padding:.25rem .625rem; border-radius:6px; border:1px solid #E5E7EB; background:#fff; font-size:.7rem; cursor:pointer; transition:all .2s; }
+.pv-demo button.active { background:#2563EB; color:#fff; border-color:#2563EB; }
+
+/* Banner */
+.pv-banner { display:flex; align-items:flex-start; gap:.75rem; padding:1rem 1.25rem; border-radius:12px; margin-bottom:1.5rem; animation:fadeUp .5s cubic-bezier(.16,1,.3,1) both; }
+.pv-banner--PENDING_VERIFICATION { background:#EFF6FF; border:1px solid #BFDBFE; }
+.pv-banner--REJECTED { background:#FEF2F2; border:1px solid #FECACA; }
+.pv-banner--ACTIVE { background:#ECFDF5; border:1px solid #A7F3D0; }
+.pv-banner__icon { flex-shrink:0; margin-top:2px; }
+.pv-banner--PENDING_VERIFICATION .pv-banner__icon { color:#2563EB; }
+.pv-banner--REJECTED .pv-banner__icon { color:#DC2626; }
+.pv-banner--ACTIVE .pv-banner__icon { color:#059669; }
+.pv-banner__text { flex:1; }
+.pv-banner__text strong { font-size:.875rem; color:#0F172A; display:block; margin-bottom:.25rem; }
+.pv-banner__text p { font-size:.75rem; color:#475569; margin:0; line-height:1.5; }
+.pv-banner__badge { font-size:.6rem; font-weight:700; padding:.25rem .5rem; border-radius:6px; white-space:nowrap; flex-shrink:0; letter-spacing:.03em; }
+.pv-banner__badge--PENDING_VERIFICATION { background:#DBEAFE; color:#1D4ED8; }
+.pv-banner__badge--REJECTED { background:#FEE2E2; color:#DC2626; }
+.pv-banner__badge--ACTIVE { background:#D1FAE5; color:#059669; }
+
+/* Section */
+.pv-section { background:#fff; border:1px solid #E5E7EB; border-radius:14px; padding:1.5rem; margin-bottom:1rem; }
+.pv-section__head { display:flex; gap:.625rem; align-items:flex-start; margin-bottom:1.25rem; }
+.pv-section__head h2 { font-size:.95rem; font-weight:700; color:#0F172A; margin:0; }
+.pv-section__head p { font-size:.75rem; color:#6B7280; margin:.125rem 0 0; }
+.pv-section__icon { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.pv-section__icon--blue { background:#EFF6FF; color:#2563EB; }
+
+/* Store banner */
+.pv-store-banner { position:relative; border-radius:10px; overflow:hidden; margin-bottom:.75rem; height:140px; background:#E5E7EB; }
+.pv-store-banner__img { width:100%; height:100%; object-fit:cover; }
+.pv-store-logo { position:absolute; bottom:-20px; left:16px; width:48px; height:48px; border-radius:10px; background:#0F172A; display:flex; align-items:center; justify-content:center; border:3px solid #fff; }
+.pv-store-badge { position:absolute; top:8px; right:8px; font-size:.6rem; font-weight:700; padding:.2rem .5rem; border-radius:6px; }
+.pv-store-badge--red { background:#FEE2E2; color:#DC2626; }
+
+.pv-store-name { font-size:1.1rem; font-weight:700; color:#0F172A; margin:1.5rem 0 .125rem; }
+.pv-store-cat { font-size:.75rem; color:#6B7280; }
+
+.pv-detail-block { margin-top:1rem; }
+.pv-detail-block label { font-size:.65rem; font-weight:700; color:#9CA3AF; letter-spacing:.04em; text-transform:uppercase; display:block; margin-bottom:.25rem; }
+.pv-detail-block p { font-size:.8rem; color:#374151; line-height:1.6; margin:0; }
+.pv-muted { color:#9CA3AF; }
+.pv-link-btn { background:none; border:none; color:#2563EB; font-size:.75rem; font-weight:600; cursor:pointer; padding:0; margin-top:.375rem; }
+.pv-link-btn:hover { text-decoration:underline; }
+
+/* Security */
+.pv-security { display:flex; gap:.625rem; align-items:flex-start; background:#F9FAFB; border:1px solid #E5E7EB; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; }
+.pv-security strong { font-size:.8rem; color:#0F172A; display:block; margin-bottom:.125rem; }
+.pv-security p { font-size:.7rem; color:#6B7280; margin:0; line-height:1.5; }
+
+/* Section title */
+.pv-section-title { font-size:1rem; font-weight:700; color:#0F172A; margin:0 0 .75rem; }
+
+/* Documents */
+.pv-docs { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1.5rem; }
+.pv-doc { display:flex; align-items:center; gap:.625rem; background:#fff; border:1px solid #E5E7EB; border-radius:10px; padding:.75rem 1rem; transition:border-color .2s; }
+.pv-doc:hover { border-color:#D1D5DB; }
+.pv-doc__icon { flex-shrink:0; }
+.pv-doc__info { flex:1; min-width:0; }
+.pv-doc__name { font-size:.8rem; font-weight:600; color:#0F172A; display:block; }
+.pv-doc__file { font-size:.7rem; color:#9CA3AF; }
+.doc-badge { font-size:.6rem; font-weight:700; padding:.2rem .5rem; border-radius:6px; white-space:nowrap; }
+.doc-badge--orange { background:#FEF3C7; color:#D97706; }
+.doc-badge--green { background:#D1FAE5; color:#059669; }
+.pv-doc__action { width:28px; height:28px; border-radius:6px; border:1px solid #E5E7EB; background:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#9CA3AF; transition:all .2s; flex-shrink:0; }
+.pv-doc__action:hover { border-color:#2563EB; color:#2563EB; }
+
+/* Validator note */
+.pv-validator-note { background:#F9FAFB; border:1px solid #E5E7EB; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem; }
+.pv-validator-note p { font-size:.8rem; color:#374151; line-height:1.6; margin:0 0 .75rem; font-style:italic; }
+.pv-validator-note__author { display:flex; align-items:center; gap:.375rem; font-size:.7rem; font-weight:600; color:#7C3AED; }
+
+/* Help */
+.pv-help { background:#fff; border:1px solid #E5E7EB; border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.5rem; max-width:260px; }
+.pv-help strong { font-size:.8rem; color:#0F172A; }
+.pv-help p { font-size:.7rem; color:#6B7280; margin:.25rem 0 .75rem; line-height:1.5; }
+.pv-help__btn { width:100%; padding:.5rem; background:#fff; border:1px solid #E5E7EB; border-radius:8px; font-family:inherit; font-size:.75rem; font-weight:600; color:#374151; cursor:pointer; transition:border-color .2s; }
+.pv-help__btn:hover { border-color:#2563EB; color:#2563EB; }
+
+/* Bottom */
+.pv-bottom { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid #E5E7EB; padding:1rem 1.5rem; display:flex; justify-content:flex-end; z-index:10; }
+.pv-btn { display:flex; align-items:center; justify-content:center; gap:.5rem; padding:.75rem 2rem; font-family:inherit; font-size:.875rem; font-weight:700; border:none; border-radius:10px; cursor:pointer; transition:all .2s; }
+.pv-btn--blue { background:#DBEAFE; color:#2563EB; }
+.pv-btn--blue:hover { background:#BFDBFE; }
+.pv-btn--green { background:#059669; color:#fff; }
+.pv-btn--green:hover { background:#047857; transform:translateY(-1px); box-shadow:0 4px 12px rgba(5,150,105,.3); }
+
+@keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@media (max-width:640px) { .pv-page { padding:1rem 1rem 5rem; } }
+@media (prefers-reduced-motion:reduce) { .pv-banner { animation:none; } }
+</style>
