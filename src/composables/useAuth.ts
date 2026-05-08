@@ -68,7 +68,7 @@ export function useAuth() {
           role: 'MERCHANT'
         }
         authStore.setAuth(fakeUser, 'fake_token_123')
-        router.push('/daftar/vendor/upload')
+        router.push('/vendor/documents')
       }, 1000)
     }
   }

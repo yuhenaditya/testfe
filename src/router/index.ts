@@ -10,6 +10,7 @@ import AdminValidatorLayout from '../layouts/AdminValidatorLayout.vue'
 // Views - Auth
 import AdminLoginView from '../views/auth/AdminLoginView.vue'
 import RegisterView from '../views/auth/RegisterView.vue'
+import MerchantRegisterView from '../views/auth/MerchantRegisterView.vue'
 
 // Views - Client
 import HomeView from '../views/client/HomeView.vue'
@@ -111,6 +112,11 @@ const routes = [
     alias: '/masuk/user',
   },
   // Legacy vendor register sub-routes (kept for backward compat)
+  {
+    path: '/daftar/merchant',
+    name: 'MerchantRegister',
+    component: MerchantRegisterView,
+  },
   {
     path: '/daftar/vendor',
     name: 'VendorRegister',

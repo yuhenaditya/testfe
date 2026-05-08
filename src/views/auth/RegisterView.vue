@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from '../../composables/useAuth'
+
+const router = useRouter()
 const { loginMutation } = useAuth()
 
 const step = ref(1) // 1 | 2 | 3
@@ -58,6 +61,10 @@ function selectRole(r: 'CLIENT' | 'MERCHANT') {
 
 function handleFinish() {
   if (!form.role) return
+  if (form.role === 'MERCHANT') {
+    router.push('/daftar/merchant')
+    return
+  }
   loginMutation.mutate({
     email: form.email,
     password: form.password,
